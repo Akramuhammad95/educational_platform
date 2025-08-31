@@ -16,15 +16,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from education import urls
+
 
 urlpatterns = [
 
     path('admin/', admin.site.urls),
-    path('my-courses/', include('education.urls')),
-    path('dashboard/', include('core.urls')),
-    path('', include('marketing.urls')),
-    
 
 ]
 
