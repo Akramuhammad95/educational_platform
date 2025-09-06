@@ -1,29 +1,15 @@
-from django.shortcuts import render
-from education import models
+# core/views.py
+from rest_framework import generics
+from rest_framework.permissions import AllowAny
+from .serializers import StudentRegisterSerializer, InstructorRegisterSerializer
+from .models import Student, Instructor
 
-# Create your views here.
+class StudentRegisterView(generics.CreateAPIView):
+    queryset = Student.objects.all()
+    serializer_class = StudentRegisterSerializer
+    permission_classes = [AllowAny]
 
-def dashboard(request):
-    courses = models.Course.objects.all()
-    students = models.Student.objects.all() 
-    instructors = models.Instructor.objects.all()
-    weaks = models.Week.objects.all()
-    enrollments = models.Enrollment.objects.all()
-    certificates = models.Certificate.objects.all()
-    assignments = models.Assignment.objects.all()
-    submissions = models.Submission.objects.all()
-
-    context = {
-
-        'courses': courses,
-        'students': students,
-        'instructors': instructors,
-        'weaks': weaks,
-        'enrollments': enrollments,
-        'certificates': certificates,
-        'assignments': assignments,
-        'submissions': submissions,
-
-
-    }
-    return render(request, 'core/dashboard.html', context)
+class InstructorRegisterView(generics.CreateAPIView):
+    queryset = Instructor.objects.all()
+    serializer_class = InstructorRegisterSerializer
+    permission_classes = [AllowAny]
