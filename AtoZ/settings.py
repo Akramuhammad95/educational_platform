@@ -44,6 +44,17 @@ SIMPLE_JWT = {
     "BLACKLIST_AFTER_ROTATION": True,
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+# URL اللي هتوصل بيه ملفات الـ static
+STATIC_URL = "/static/"
+
+# المكان اللي هيتم تجميع كل ملفات الـ static فيه
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
+
 
 
 # Application definition

@@ -1,22 +1,35 @@
-# Use Python base image
+# ===== Base Image =====
 FROM python:3.11-slim
 
-# Environment variables
+# ===== Set environment variables =====
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-# Set work directory
+# ===== Set work directory =====
 WORKDIR /app
 
-# Install dependencies
-COPY requirements.txt .
-RUN pip install --upgrade pip && pip install -r requirements.txt
+# ===== Install system dependencies =====
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libpq-dev \
+    libjpeg-dev \
+    zlib1g-dev \
+    libpng-dev \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
 
-# Copy project files
-COPY . .
+# ===== Install Python dependencies =====
+COPY requirements.txt /app/
+RUN pip install --upgrade pip \
+    && pip install -r requirements.txt
 
-# Collect static files
+# ===== Copy project files =====
+COPY . /app/
+
+# ===== Collect static files =====
 RUN python manage.py collectstatic --noinput
 
-# Run Gunicorn
-CMD ["gunicorn", "educational_platform.wsgi:application", "--bind", "0.0.0.0:8000"]
+EXPOSE 8000
+CMD ["gunicorn", "AtoZ.wsgi:application", "--bind", "0.0.0.0:8000"]
+
+RUN pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt
