@@ -1,22 +1,32 @@
+version: "3.9"
+
 services:
   django_app:
-    build: .
-    command: gunicorn AtoZ.wsgi:application --bind 0.0.0.0:8001
+    build:
+      context: .
+    container_name: django_app
     volumes:
-      - django_volume:/app
-      - static_volume:/app/staticfiles
-      - media_volume:/app/media
+      - .:/app
+    working_dir: /app
+    command: python manage.py runserver 0.0.0.0:8000
     ports:
-      - "8001:8001"
+      - "8000:8000"
     depends_on:
       - postgres_db
+    environment:
+      POSTGRES_DB: educational_platform
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_HOST: postgres_db
+      POSTGRES_PORT: 5432
 
   postgres_db:
     image: postgres:15
+    container_name: postgres_db
     environment:
+      POSTGRES_DB: educational_platform
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: educational_platform
     ports:
       - "5432:5432"
     volumes:
@@ -24,10 +34,11 @@ services:
 
   nginx:
     image: nginx:1.25
+    container_name: nginx
     ports:
       - "80:80"
     volumes:
-      - nginx_conf_volume:/etc/nginx/conf.d
+      - ./nginx:/etc/nginx/conf.d   # mount your custom conf from ./nginx/
       - static_volume:/app/staticfiles
       - media_volume:/app/media
     depends_on:
@@ -37,5 +48,3 @@ volumes:
   postgres_data:
   static_volume:
   media_volume:
-  django_volume:
-  nginx_conf_volume:
